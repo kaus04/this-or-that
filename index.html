@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>This or That - Cute Edition</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff0f6;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  h1 {
+    margin-bottom: 10px;
+    color: #d6336c;
+    font-size: 3rem;
+  }
+  #game-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(214, 51, 108, 0.3);
+    max-width: 450px;
+    width: 100%;
+    padding: 25px 30px;
+    text-align: center;
+  }
+  .question-text {
+    font-size: 2rem;
+    margin-bottom: 40px;
+    font-weight: 700;
+    color: #a83256;
+  }
+  .choices {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  .choice-btn {
+    background: #ffe3ec;
+    border: 3px solid #d6336c;
+    border-radius: 20px;
+    padding: 25px 40px;
+    width: 180px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    user-select: none;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #d6336c;
+    letter-spacing: 0.06em;
+    border-radius: 18px;
+    box-shadow: 0 3px 7px rgba(214, 51, 108, 0.25);
+  }
+  .choice-btn:hover {
+    background: #d6336c;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(214, 51, 108, 0.5);
+  }
+  #final-question {
+    position: relative;
+    margin-top: 20px;
+    height: 180px;
+  }
+  #final-question p {
+    font-weight: 900;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    color: #a83256;
+  }
+  #yesBtn, #noBtn {
+    position: absolute;
+    padding: 15px 45px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.4rem;
+    font-weight: 900;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s;
+  }
+  #yesBtn {
+    background-color: #d6336c;
+    color: white;
+    top: 120px;
+    left: 50px;
+    box-shadow: 0 5px 12px #d6336caa;
+  }
+  #yesBtn:hover {
+    background-color: #a71d45;
+  }
+  #noBtn {
+    background-color: #f5c6cb;
+    color: #721c24;
+    top: 120px;
+    /* left set by JS on load */
+    box-shadow: 0 5px 12px #f5c6cbaa;
+  }
+  #noBtn:hover {
+    background-color: #f1b0b7;
+  }
+  #summary {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 2.5rem;
+    color: #d6336c;
+    font-weight: 900;
+  }
+  footer {
+    margin-top: auto;
+    font-size: 1rem;
+    color: #aaa;
+  }
+  #title-screen {
+    max-width: 450px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(214, 51, 108, 0.3);
+    padding: 60px 30px;
+    margin-bottom: 30px;
+  }
+  #title-screen h2 {
+    font-size: 3rem;
+    color: #d6336c;
+    margin-bottom: 40px;
+  }
+  #start-btn {
+    background-color: #d6336c;
+    color: white;
+    font-size: 2rem;
+    padding: 18px 50px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(214, 51, 108, 0.6);
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  #start-btn:hover {
+    background-color: #a71d45;
+    transform: scale(1.05);
+  }
+</style>
+</head>
+<body>
+
+  <div id="title-screen">
+    <h2>Hi Krissha, let's play<br>This or That ❤️</h2>
+    <button id="start-btn">Start</button>
+  </div>
+
+  <div id="game-container" style="display:none;">
+    <div id="question-container">
+      <!-- Question & choices will go here -->
+    </div>
+
+    <div id="final-question" style="display:none;">
+      <p>Do you find me cute?</p>
+      <button id="yesBtn">Yes 🥰</button>
+      <button id="noBtn">No 😜</button>
+    </div>
+
+    <div id="summary" style="display:none;"></div>
+  </div>
+
+  <footer>
+    Made just for you 💖
+  </footer>
+
+<script>
+  const questions = [
+    {
+      text: "Coffee ☕ or Tea 🍵?",
+      choices: [
+        { text: "Coffee ☕" },
+        { text: "Tea 🍵" }
+      ]
+    },
+    {
+      text: "Beach 🏖️ or Mountains 🏔️?",
+      choices: [
+        { text: "Beach 🏖️" },
+        { text: "Mountains 🏔️" }
+      ]
+    },
+    {
+      text: "Cats 🐱 or Dogs 🐶?",
+      choices: [
+        { text: "Cats 🐱" },
+        { text: "Dogs 🐶" }
+      ]
+    },
+    {
+      text: "Sweet 🍰 or Savory 🥨?",
+      choices: [
+        { text: "Sweet 🍰" },
+        { text: "Savory 🥨" }
+      ]
+    },
+    {
+      text: "Books 📚 or Movies 🎬?",
+      choices: [
+        { text: "Books 📚" },
+        { text: "Movies 🎬" }
+      ]
+    }
+  ];
+
+  let currentQuestionIndex = 0;
+  const selections = [];
+
+  const titleScreen = document.getElementById('title-screen');
+  const gameContainer = document.getElementById('game-container');
+  const questionContainer = document.getElementById('question-container');
+  const finalQuestionDiv = document.getElementById('final-question');
+  const summaryDiv = document.getElementById('summary');
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+
+  document.getElementById('start-btn').addEventListener('click', () => {
+    titleScreen.style.display = 'none';
+    gameContainer.style.display = 'block';
+    showQuestion();
+  });
+
+  function showQuestion() {
+    if (currentQuestionIndex < questions.length) {
+      const q = questions[currentQuestionIndex];
+      questionContainer.style.display = 'block';
+      finalQuestionDiv.style.display = 'none';
+      summaryDiv.style.display = 'none';
+
+      questionContainer.innerHTML = `
+        <div class="question-text">${q.text}</div>
+        <div class="choices">
+          ${q.choices.map((choice, idx) => `
+            <button class="choice-btn" onclick="choose(${idx})">
+              ${choice.text}
+            </button>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      questionContainer.style.display = 'none';
+      finalQuestionDiv.style.display = 'block';
+    }
+  }
+
+  function choose(choiceIdx) {
+    const q = questions[currentQuestionIndex];
+    selections.push(q.choices[choiceIdx].text);
+    currentQuestionIndex++;
+    showQuestion();
+  }
+
+  // Initial noBtn position offset a bit so no overlap on page load
+  window.addEventListener('load', () => {
+    const initialLeft = 180 + Math.floor(Math.random() * 30); // 180-209 px
+    const initialTop = 120 + Math.floor(Math.random() * 20);  // 120-139 px
+    noBtn.style.left = initialLeft + 'px';
+    noBtn.style.top = initialTop + 'px';
+  });
+
+  noBtn.addEventListener('mouseover', () => {
+    const containerRect = finalQuestionDiv.getBoundingClientRect();
+    const yesRect = yesBtn.getBoundingClientRect();
+    
+    const noBtnWidth = noBtn.offsetWidth;
+    const noBtnHeight = noBtn.offsetHeight;
+
+    const maxX = finalQuestionDiv.clientWidth - noBtnWidth;
+    const maxY = finalQuestionDiv.clientHeight - noBtnHeight;
+
+    let newX, newY;
+    let tries = 0;
+    const maxTries = 100;
+
+    do {
+      newX = Math.random() * maxX;
+      newY = Math.random() * maxY;
+
+      const noLeft = containerRect.left + newX;
+      const noTop = containerRect.top + newY;
+
+      // Check for overlap with yesBtn
+      const overlap = !(noLeft + noBtnWidth < yesRect.left ||
+                        noLeft > yesRect.right ||
+                        noTop + noBtnHeight < yesRect.top ||
+                        noTop > yesRect.bottom);
+
+      if (!overlap) break;
+      tries++;
+    } while (tries < maxTries);
+
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+  });
+
+  yesBtn.addEventListener('click', () => {
+    finalQuestionDiv.style.display = 'none';
+    summaryDiv.style.display = 'block';
+    summaryDiv.textContent = "I knew it! I think you are cute too <3";
+  });
+</script>
+</body>
+</html>
